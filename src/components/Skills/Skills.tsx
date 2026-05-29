@@ -6,38 +6,39 @@ type Category = 'ml' | 'web' | 'backend' | 'tools';
 interface Skill {
   text: string;
   category: Category;
+  icon?: string;
 }
 
 const allSkills: Skill[] = [
   // Machine Learning
-  { text: "Python", category: "ml" },
-  { text: "TensorFlow", category: "ml" },
-  { text: "Scikit-Learn", category: "ml" },
-  { text: "Pandas", category: "ml" },
+  { text: "Python", category: "ml", icon: "python" },
+  { text: "TensorFlow", category: "ml", icon: "tensorflow" },
+  { text: "Scikit-Learn", category: "ml", icon: "scikitlearn" },
+  { text: "Pandas", category: "ml", icon: "pandas" },
   { text: "CNNs", category: "ml" },
   { text: "Forecasting", category: "ml" },
   
   // Web Engineering
-  { text: "React", category: "web" },
-  { text: "TypeScript", category: "web" },
-  { text: "Next.js", category: "web" },
-  { text: "Tailwind", category: "web" },
-  { text: "HTML/CSS", category: "web" },
+  { text: "React", category: "web", icon: "react" },
+  { text: "TypeScript", category: "web", icon: "typescript" },
+  { text: "Next.js", category: "web", icon: "nextdotjs" },
+  { text: "Tailwind", category: "web", icon: "tailwindcss" },
+  { text: "HTML/CSS", category: "web", icon: "html5" },
   
   // Backend & DB
-  { text: "Node.js", category: "backend" },
-  { text: "Express.js", category: "backend" },
-  { text: "SQL", category: "backend" },
-  { text: "PostgreSQL", category: "backend" },
-  { text: "MongoDB", category: "backend" },
+  { text: "Node.js", category: "backend", icon: "nodedotjs" },
+  { text: "Express.js", category: "backend", icon: "express" },
+  { text: "SQL", category: "backend", icon: "postgresql" },
+  { text: "PostgreSQL", category: "backend", icon: "postgresql" },
+  { text: "MongoDB", category: "backend", icon: "mongodb" },
   { text: "REST APIs", category: "backend" },
 
   // Tools & Cloud
-  { text: "AWS", category: "tools" },
-  { text: "Docker", category: "tools" },
-  { text: "Git", category: "tools" },
-  { text: "Linux", category: "tools" },
-  { text: "Vite", category: "tools" }
+  { text: "AWS", category: "tools", icon: "amazonwebservices" },
+  { text: "Docker", category: "tools", icon: "docker" },
+  { text: "Git", category: "tools", icon: "git" },
+  { text: "Linux", category: "tools", icon: "linux" },
+  { text: "Vite", category: "tools", icon: "vite" }
 ];
 
 const categoryColors = {
@@ -73,6 +74,7 @@ const Skills: React.FC = () => {
 
     let mouse = { x: 0, y: 0, isDown: false, dx: 0, dy: 0 };
     let draggedNode: SkillNode | null = null;
+    let hoveredNode: SkillNode | null = null;
     let buckets: any[] = [];
     let nodes: SkillNode[] = [];
     const updateBuckets = () => {
@@ -100,11 +102,19 @@ const Skills: React.FC = () => {
       radius: number;
       text: string;
       color: string;
+      img: HTMLImageElement | null = null;
+      iconLoaded: boolean = false;
 
       constructor(skill: Skill) {
         this.text = skill.text;
         this.color = categoryColors[skill.category];
         this.radius = dynamicRadius;
+        
+        if (skill.icon) {
+          this.img = new Image();
+          this.img.src = `https://cdn.simpleicons.org/${skill.icon}/0f172a`;
+          this.img.onload = () => { this.iconLoaded = true; };
+        }
         
         // Spawn inside their respective bucket (Absolute Doc Coordinates)
         const bucket = buckets.find(b => b.id === skill.category);
@@ -145,9 +155,18 @@ const Skills: React.FC = () => {
           }
 
           if (insideBucket) {
-             if (this.x - this.radius < insideBucket.left) { this.x = insideBucket.left + this.radius; this.vx *= -bounce; }
-             if (this.x + this.radius > insideBucket.right) { this.x = insideBucket.right - this.radius; this.vx *= -bounce; }
-             if (this.y + this.radius > insideBucket.bottom) { this.y = insideBucket.bottom - this.radius; this.vy *= -bounce; }
+            // Walls
+            if (this.x - this.radius < insideBucket.left)  { this.x = insideBucket.left  + this.radius; this.vx =  Math.abs(this.vx) * bounce; }
+            if (this.x + this.radius > insideBucket.right) { this.x = insideBucket.right - this.radius; this.vx = -Math.abs(this.vx) * bounce; }
+            // Floor — settle instead of micro-bounce
+            if (this.y + this.radius > insideBucket.bottom) {
+              this.y = insideBucket.bottom - this.radius;
+              if (Math.abs(this.vy) < 1.5) { this.vy = 0; }  // settle
+              else                          { this.vy *= -bounce; }
+            }
+            // Velocity dead zone — kills residual micro-vibration
+            if (Math.abs(this.vx) < 0.12) this.vx = 0;
+            if (Math.abs(this.vy) < 0.12) this.vy = 0;
           } else {
              // Global constraints (Viewport left/right, Viewport bottom)
              if (this.x - this.radius < 0) { 
@@ -188,12 +207,41 @@ const Skills: React.FC = () => {
         ctx.fillStyle = this.color;
         ctx.fill();
 
-        const fontSize = Math.max(9, Math.min(15, this.radius / 3.2));
-        ctx.font = `700 ${fontSize}px Inter, sans-serif`;
-        ctx.fillStyle = '#0f172a';
+        if (this.iconLoaded && this.img) {
+          // Reduced from 1.2 to 0.9 to make the logo smaller inside the ball
+          const imgSize = this.radius * 0.9;
+          ctx.drawImage(this.img, this.x - imgSize / 2, screenY - imgSize / 2, imgSize, imgSize);
+        } else {
+          const fontSize = Math.max(9, Math.min(15, this.radius / 3.2));
+          ctx.font = `700 ${fontSize}px Inter, sans-serif`;
+          ctx.fillStyle = '#0f172a';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(this.text, this.x, screenY);
+        }
+      } // <- this closing brace was missing
+
+      drawTooltip(ctx: CanvasRenderingContext2D) {
+        const screenY = this.y - window.scrollY;
+        ctx.font = '600 14px Inter, sans-serif';
+        const textWidth = ctx.measureText(this.text).width;
+        const paddingX = 12;
+        const paddingY = 6;
+        const tooltipWidth = textWidth + paddingX * 2;
+        const tooltipHeight = 14 + paddingY * 2;
+        const tooltipY = screenY - this.radius - tooltipHeight - 10;
+        
+        // Tooltip background
+        ctx.beginPath();
+        ctx.roundRect(this.x - tooltipWidth / 2, tooltipY, tooltipWidth, tooltipHeight, 8);
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'; // Dark slate background
+        ctx.fill();
+        
+        // Tooltip text
+        ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(this.text, this.x, screenY);
+        ctx.fillText(this.text, this.x, tooltipY + tooltipHeight / 2);
       }
     }
 
@@ -206,19 +254,27 @@ const Skills: React.FC = () => {
           const min_dist = nodes[i].radius + nodes[j].radius;
 
           if (dist < min_dist && dist > 0) {
-            const angle = Math.atan2(dy, dx);
-            const targetX = nodes[i].x + Math.cos(angle) * min_dist;
-            const targetY = nodes[i].y + Math.sin(angle) * min_dist;
-            const ax = (targetX - nodes[j].x) * 0.3;
-            const ay = (targetY - nodes[j].y) * 0.3;
-            
+            // Position correction — push balls apart directly (no velocity impulse)
+            // This is key: velocity impulses cause perpetual micro-vibration at rest
+            const overlap = (min_dist - dist) * 0.5;
+            const nx = dx / dist;
+            const ny = dy / dist;
+
             if (draggedNode !== nodes[i]) {
-              nodes[i].vx -= ax;
-              nodes[i].vy -= ay;
+              nodes[i].x -= nx * overlap;
+              nodes[i].y -= ny * overlap;
             }
             if (draggedNode !== nodes[j]) {
-              nodes[j].vx += ax;
-              nodes[j].vy += ay;
+              nodes[j].x += nx * overlap;
+              nodes[j].y += ny * overlap;
+            }
+
+            // Tiny velocity exchange only when approaching fast (actual collision)
+            const relV = (nodes[i].vx - nodes[j].vx) * nx + (nodes[i].vy - nodes[j].vy) * ny;
+            if (relV > 1.0) {   // only react to meaningful impacts
+              const impulse = relV * 0.35;
+              if (draggedNode !== nodes[i]) { nodes[i].vx -= nx * impulse; nodes[i].vy -= ny * impulse; }
+              if (draggedNode !== nodes[j]) { nodes[j].vx += nx * impulse; nodes[j].vy += ny * impulse; }
             }
           }
         }
@@ -228,10 +284,19 @@ const Skills: React.FC = () => {
     const render = () => {
       ctx.clearRect(0, 0, width, height);
       resolveCollisions();
+      
       nodes.forEach(node => {
         node.update();
         node.draw(ctx);
       });
+
+      // Draw tooltips in a second pass so they always appear ON TOP of all balls
+      nodes.forEach(node => {
+        if (draggedNode === node || hoveredNode === node) {
+          node.drawTooltip(ctx);
+        }
+      });
+
       animationFrameId = requestAnimationFrame(render);
     };
 
@@ -251,18 +316,25 @@ const Skills: React.FC = () => {
 
           const runTutorialCycle = () => {
             if (!tutActiveRef.current || nodes.length === 0) return;
-            // Pick a ball from the Backend bucket (3rd of 4 columns = middle)
             const tutNode = nodes.find(n => n.text === 'Node.js') ?? nodes[0];
 
-            // Grab ball at its current (settled) position
-            mouse.x = tutNode.x;
-            mouse.y = tutNode.y;
+            // ── Fixed start: center of the Backend bucket ──
+            const bucketEl = document.getElementById('bucket-backend');
+            let startX = width / 2;
+            let startY = window.scrollY + window.innerHeight * 0.6; // fallback
+            if (bucketEl) {
+              const rect = bucketEl.getBoundingClientRect();
+              startX = rect.left + rect.width / 2;
+              startY = rect.bottom + window.scrollY - 60; // 60px above bucket bottom
+            }
+
+            // Snap mouse to bucket center and grab the ball
+            mouse.x = startX;
+            mouse.y = startY;
             mouse.isDown = true;
             draggedNode = tutNode;
 
-            const startX = tutNode.x;
-            const startY = tutNode.y;
-            const targetY = startY - 220; // lift 220px upward
+            const targetY = startY - 240; // lift 240px upward out of bucket
             const duration = 1600;
             const startTime = performance.now();
 
@@ -312,6 +384,28 @@ const Skills: React.FC = () => {
     const handleMouseMove = (e: MouseEvent) => {
       const docX = e.clientX;
       const docY = e.clientY + window.scrollY;
+
+      // 1. Always detect hover based on real mouse coordinates (even during tutorial)
+      if (!mouse.isDown) {
+        hoveredNode = null;
+        for (let i = nodes.length - 1; i >= 0; i--) {
+          const dx = docX - nodes[i].x;
+          const dy = docY - nodes[i].y;
+          if (Math.sqrt(dx * dx + dy * dy) < nodes[i].radius) {
+            hoveredNode = nodes[i];
+            break;
+          }
+        }
+        // Change cursor to pointer if hovering a ball
+        if (canvasRef.current) {
+          canvasRef.current.style.cursor = hoveredNode ? 'pointer' : 'default';
+        }
+      }
+
+      // 2. If tutorial is active, it controls the dragged ball position — ignore real mouse moves
+      if (tutActiveRef.current) return; 
+
+      // 3. Otherwise, update physics engine mouse state
       mouse.dx = docX - lastMouse.x;
       mouse.dy = docY - lastMouse.y;
       mouse.x = docX;
@@ -324,6 +418,7 @@ const Skills: React.FC = () => {
       cancelAnimationFrame(tutRafRef.current);
       if (tutTimerRef.current) clearTimeout(tutTimerRef.current);
       draggedNode = null;
+      hoveredNode = null;
       mouse.isDown = false;
       if (handRef.current) handRef.current.style.opacity = '0';
       setShowTutorial(false);
@@ -338,6 +433,7 @@ const Skills: React.FC = () => {
         const dy = docY - nodes[i].y;
         if (Math.sqrt(dx * dx + dy * dy) < nodes[i].radius) {
           draggedNode = nodes[i];
+          hoveredNode = null; // Dragging takes precedence
           mouse.isDown = true;
           mouse.x = docX;
           mouse.y = docY;
@@ -351,11 +447,13 @@ const Skills: React.FC = () => {
     const handleMouseUp = () => {
       mouse.isDown = false;
       draggedNode = null;
+      // Re-evaluate hover immediately after drop
+      handleMouseMove({ clientX: mouse.x, clientY: mouse.y - window.scrollY } as MouseEvent);
     };
 
     // Touch Events for Mobile
     const handleTouchMove = (e: TouchEvent) => {
-      if (!mouse.isDown) return;
+      if (!mouse.isDown || tutActiveRef.current) return; // ignore during tutorial
       const touch = e.touches[0];
       const docX = touch.clientX;
       const docY = touch.clientY + window.scrollY;
