@@ -12,9 +12,9 @@
   --accent-sat: 90%;
   --accent-light: 60%;
 
-  --glass-bg: hsla(var(--bg-hue), var(--bg-sat), 90%, 0.7);
-  --glass-border: hsla(var(--bg-hue), var(--bg-sat), 80%, 0.5);
-  --bucket-bg: hsla(var(--bg-hue), var(--bg-sat), 82%, 0.8); /* Slightly darker and more opaque */
+  --glass-bg: hsla(var(--bg-hue), var(--bg-sat), 90%, 0.92); /* Reduced transparency */
+  --glass-border: hsla(var(--bg-hue), var(--bg-sat), 80%, 0.7); /* Slightly stronger border */
+  --bucket-bg: hsla(var(--bg-hue), var(--bg-sat), 82%, 0.95);
 
   --background: hsl(var(--bg-hue), var(--bg-sat), var(--bg-light));
   --text: hsl(var(--text-hue), var(--text-sat), var(--text-light));
@@ -37,9 +37,9 @@
   --accent-sat: 90%;
   --accent-light: 70%;
 
-  --glass-bg: hsla(var(--bg-hue), var(--bg-sat), 15%, 0.6);
-  --glass-border: hsla(var(--bg-hue), var(--bg-sat), 30%, 0.3);
-  --bucket-bg: hsla(var(--bg-hue), var(--bg-sat), 12%, 0.7);
+  --glass-bg: hsla(var(--bg-hue), var(--bg-sat), 15%, 0.85); /* Reduced transparency */
+  --glass-border: hsla(var(--bg-hue), var(--bg-sat), 30%, 0.5); /* Slightly stronger border */
+  --bucket-bg: hsla(var(--bg-hue), var(--bg-sat), 12%, 0.9);
 
   --background: hsl(var(--bg-hue), var(--bg-sat), var(--bg-light));
   --text: hsl(var(--text-hue), var(--text-sat), var(--text-light));

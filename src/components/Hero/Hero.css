@@ -114,3 +114,52 @@
     transform: translateY(-15px);
   }
 }
+
+/* ─── Hero Stats ─── */
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5rem;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 0 1rem;
+}
+
+/* Vertical dividers between stats */
+.stat-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 40px;
+  width: 1px;
+  background-color: var(--glass-border);
+}
+
+.stat-num {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #34d399; /* Neon teal/green matching the screenshot */
+  margin-bottom: 0.25rem;
+  font-family: 'Fira Code', monospace;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: var(--text);
+  opacity: 0.5;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+

@@ -22,15 +22,15 @@ const AboutMe: React.FC = () => {
           <div className="code-line"><span className="token-comment">// A brief introduction</span></div>
           <div className="code-line"><span className="token-keyword">const</span> <span className="token-variable">developer</span> <span className="token-operator">=</span> {'{'}</div>
           <div className="code-line indent-1">name: <span className="token-string">'Harsh Vardhan'</span>,</div>
-          <div className="code-line indent-1">role: <span className="token-string">'Full-Stack Web Developer'</span>,</div>
+          <div className="code-line indent-1">role: <span className="token-string">'Full-Stack ML & Web Engineer'</span>,</div>
           <div className="code-line indent-1">status: <span className="token-string">'Available for new opportunities'</span>,</div>
           <div className="code-line indent-1">focus: [</div>
-          <div className="code-line indent-2"><span className="token-string">'Clean Architecture'</span>,</div>
-          <div className="code-line indent-2"><span className="token-string">'Pixel-Perfect UI'</span>,</div>
-          <div className="code-line indent-2"><span className="token-string">'Seamless UX'</span></div>
+          <div className="code-line indent-2"><span className="token-string">'Agentic AI Systems'</span>,</div>
+          <div className="code-line indent-2"><span className="token-string">'Scalable Backend Architecture'</span>,</div>
+          <div className="code-line indent-2"><span className="token-string">'Interactive Frontend UIs'</span></div>
           <div className="code-line indent-1">],</div>
           <div className="code-line indent-1">bio: <span className="token-keyword">function</span>() {'{'}</div>
-          <div className="code-line indent-2"><span className="token-keyword">return</span> <span className="token-string">`I blend technical logic with creative design to build digital experiences that matter.`</span>;</div>
+          <div className="code-line indent-2"><span className="token-keyword">return</span> <span className="token-string">`I bridge the gap between complex machine learning models and high-performance, user-centric web applications.`</span>;</div>
           <div className="code-line indent-1">{'}'}</div>
           <div className="code-line">{'}'};</div>
           <br/>

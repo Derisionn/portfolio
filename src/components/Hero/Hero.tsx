@@ -18,6 +18,26 @@ const Hero: React.FC = () => {
             <span style={{ fontSize: '1.2em' }}>↓</span>
           </a>
         </div>
+
+        {/* Hero Stats */}
+        <div className="hero-stats">
+          <div className="stat-item">
+            <span className="stat-num">2+</span>
+            <span className="stat-label">INTERNSHIPS</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-num">500+</span>
+            <span className="stat-label">DSA PROBLEMS</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-num">6+</span>
+            <span className="stat-label">APPS SHIPPED</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-num">1464</span>
+            <span className="stat-label">CF RATING</span>
+          </div>
+        </div>
       </div>
     </section>
   );
