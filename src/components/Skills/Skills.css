@@ -92,7 +92,7 @@
 
 .bucket-card {
   height: 350px; /* Fixed height for the visual bucket now */
-  background: var(--glass-bg); 
+  background: var(--bucket-bg); 
   border: 3px solid var(--glass-border);
   backdrop-filter: blur(8px);
   border-top: none;

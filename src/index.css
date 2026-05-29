@@ -14,6 +14,7 @@
 
   --glass-bg: hsla(var(--bg-hue), var(--bg-sat), 90%, 0.7);
   --glass-border: hsla(var(--bg-hue), var(--bg-sat), 80%, 0.5);
+  --bucket-bg: hsla(var(--bg-hue), var(--bg-sat), 82%, 0.8); /* Slightly darker and more opaque */
 
   --background: hsl(var(--bg-hue), var(--bg-sat), var(--bg-light));
   --text: hsl(var(--text-hue), var(--text-sat), var(--text-light));
@@ -38,6 +39,7 @@
 
   --glass-bg: hsla(var(--bg-hue), var(--bg-sat), 15%, 0.6);
   --glass-border: hsla(var(--bg-hue), var(--bg-sat), 30%, 0.3);
+  --bucket-bg: hsla(var(--bg-hue), var(--bg-sat), 12%, 0.7);
 
   --background: hsl(var(--bg-hue), var(--bg-sat), var(--bg-light));
   --text: hsl(var(--text-hue), var(--text-sat), var(--text-light));
