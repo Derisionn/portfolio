@@ -98,9 +98,9 @@ const Projects: React.FC = () => {
                     <span key={tech} className="tech-badge">{tech}</span>
                   ))}
                 </div>
-
-                <div className="expand-hint">Hover for details ↓</div>
               </div>
+
+              <div className="expand-hint">Hover for details ↓</div>
 
               {/* Hidden drawer — slides open on hover */}
               <div className="project-details">
