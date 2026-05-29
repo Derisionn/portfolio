@@ -169,6 +169,8 @@
   font-weight: 600;
   letter-spacing: 0.4px;
   transition: opacity 0.3s ease;
+  margin-top: auto;        /* pushes hint to bottom of flex card */
+  padding: 0 1.75rem 1.25rem 1.75rem;
 }
 
 /* Hide hint when description is visible */
