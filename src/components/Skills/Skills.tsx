@@ -49,6 +49,9 @@ const categoryColors = {
 
 const Skills: React.FC = () => {
   const [showTutorial, setShowTutorial] = useState(true);
+  const [handPos, setHandPos] = useState<{ x: number; y: number } | null>(null);
+  const tutRafRef = useRef<number>(0);
+  const tutActiveRef = useRef<boolean>(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -241,6 +244,52 @@ const Skills: React.FC = () => {
         setTimeout(() => {
           updateBuckets();
           nodes = allSkills.map(s => new SkillNode(s));
+
+          // ── Tutorial: wait for balls to settle, then drag one ──
+          const tutDelay = setTimeout(() => {
+            if (nodes.length === 0) return;
+            const tutNode = nodes[0];
+
+            // Snap mouse to the ball and grab it
+            mouse.x = tutNode.x;
+            mouse.y = tutNode.y;
+            mouse.isDown = true;
+            draggedNode = tutNode;
+            tutActiveRef.current = true;
+
+            const startX = tutNode.x;
+            const startY = tutNode.y;
+            const targetY = startY - 220; // lift 220px upward in doc coords
+            const duration = 1600;
+            const startTime = performance.now();
+
+            const animTut = (now: number) => {
+              if (!tutActiveRef.current) return;
+              const t = Math.min((now - startTime) / duration, 1);
+              // ease-in-out
+              const e = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+              mouse.x = startX;
+              mouse.y = startY + (targetY - startY) * e;
+              // Update hand overlay to follow in viewport coords
+              setHandPos({ x: mouse.x, y: mouse.y - window.scrollY });
+
+              if (t < 1) {
+                tutRafRef.current = requestAnimationFrame(animTut);
+              } else {
+                // Release ball
+                draggedNode = null;
+                mouse.isDown = false;
+                tutActiveRef.current = false;
+                setTimeout(() => {
+                  setShowTutorial(false);
+                  setHandPos(null);
+                }, 500);
+              }
+            };
+            tutRafRef.current = requestAnimationFrame(animTut);
+          }, 900);
+
+          return () => clearTimeout(tutDelay);
         }, 100);
         observer.disconnect();
       }
@@ -263,14 +312,25 @@ const Skills: React.FC = () => {
       lastMouse = { x: docX, y: docY };
     };
 
+    const cancelTutorial = () => {
+      if (tutActiveRef.current) {
+        cancelAnimationFrame(tutRafRef.current);
+        tutActiveRef.current = false;
+        draggedNode = null;
+        mouse.isDown = false;
+        setShowTutorial(false);
+        setHandPos(null);
+      }
+    };
+
     const handleMouseDown = (e: MouseEvent) => {
+      cancelTutorial();
       const docX = e.clientX;
       const docY = e.clientY + window.scrollY;
       for (let i = nodes.length - 1; i >= 0; i--) {
         const dx = docX - nodes[i].x;
         const dy = docY - nodes[i].y;
         if (Math.sqrt(dx * dx + dy * dy) < nodes[i].radius) {
-          setShowTutorial(false);
           draggedNode = nodes[i];
           mouse.isDown = true;
           mouse.x = docX;
@@ -309,7 +369,7 @@ const Skills: React.FC = () => {
         const dx = docX - nodes[i].x;
         const dy = docY - nodes[i].y;
         if (Math.sqrt(dx * dx + dy * dy) < nodes[i].radius) {
-          setShowTutorial(false);
+          cancelTutorial();
           draggedNode = nodes[i];
           mouse.isDown = true;
           mouse.x = docX;
@@ -340,6 +400,7 @@ const Skills: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(tutRafRef.current);
       observer.disconnect();
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
@@ -352,21 +413,17 @@ const Skills: React.FC = () => {
     };
   }, []);
 
-  /* Auto-dismiss tutorial after 4.5 s */
-  useEffect(() => {
-    if (!showTutorial) return;
-    const t = setTimeout(() => setShowTutorial(false), 4500);
-    return () => clearTimeout(t);
-  }, [showTutorial]);
-
   return (
     <section className="skills section" id="skills" ref={sectionRef}>
       <canvas ref={canvasRef} className="global-physics-canvas" />
 
-      {showTutorial && (
-        <div className="tutorial-hint">
-          <div className="tutorial-ghost-ball" />
-          <div className="tutorial-hand">👆</div>
+      {/* Hand emoji follows the real ball being dragged */}
+      {showTutorial && handPos && (
+        <div
+          className="tutorial-hand"
+          style={{ left: handPos.x, top: handPos.y }}
+        >
+          👆
         </div>
       )}
       
