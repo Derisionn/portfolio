@@ -51,6 +51,7 @@ const Skills: React.FC = () => {
   const [showTutorial, setShowTutorial] = useState(true);
   const [handPos, setHandPos] = useState<{ x: number; y: number } | null>(null);
   const tutRafRef = useRef<number>(0);
+  const tutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tutActiveRef = useRef<boolean>(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -245,51 +246,51 @@ const Skills: React.FC = () => {
           updateBuckets();
           nodes = allSkills.map(s => new SkillNode(s));
 
-          // ── Tutorial: wait for balls to settle, then drag one ──
-          const tutDelay = setTimeout(() => {
-            if (nodes.length === 0) return;
+          // ── Tutorial: looping hand-drag until user interacts ──
+          tutActiveRef.current = true;
+
+          const runTutorialCycle = () => {
+            if (!tutActiveRef.current || nodes.length === 0) return;
             const tutNode = nodes[0];
 
-            // Snap mouse to the ball and grab it
+            // Grab ball at its current (settled) position
             mouse.x = tutNode.x;
             mouse.y = tutNode.y;
             mouse.isDown = true;
             draggedNode = tutNode;
-            tutActiveRef.current = true;
 
             const startX = tutNode.x;
             const startY = tutNode.y;
-            const targetY = startY - 220; // lift 220px upward in doc coords
+            const targetY = startY - 220; // lift 220px upward
             const duration = 1600;
             const startTime = performance.now();
 
             const animTut = (now: number) => {
               if (!tutActiveRef.current) return;
               const t = Math.min((now - startTime) / duration, 1);
-              // ease-in-out
               const e = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
               mouse.x = startX;
               mouse.y = startY + (targetY - startY) * e;
-              // Update hand overlay to follow in viewport coords
               setHandPos({ x: mouse.x, y: mouse.y - window.scrollY });
 
               if (t < 1) {
                 tutRafRef.current = requestAnimationFrame(animTut);
               } else {
-                // Release ball
+                // Release ball — let physics take over
                 draggedNode = null;
                 mouse.isDown = false;
-                tutActiveRef.current = false;
-                setTimeout(() => {
-                  setShowTutorial(false);
-                  setHandPos(null);
-                }, 500);
+                setHandPos(null);
+                // Pause, then repeat the cycle
+                tutTimerRef.current = setTimeout(() => {
+                  runTutorialCycle();
+                }, 1200);
               }
             };
             tutRafRef.current = requestAnimationFrame(animTut);
-          }, 900);
+          };
 
-          return () => clearTimeout(tutDelay);
+          // First cycle starts after balls settle
+          tutTimerRef.current = setTimeout(runTutorialCycle, 900);
         }, 100);
         observer.disconnect();
       }
@@ -313,14 +314,13 @@ const Skills: React.FC = () => {
     };
 
     const cancelTutorial = () => {
-      if (tutActiveRef.current) {
-        cancelAnimationFrame(tutRafRef.current);
-        tutActiveRef.current = false;
-        draggedNode = null;
-        mouse.isDown = false;
-        setShowTutorial(false);
-        setHandPos(null);
-      }
+      tutActiveRef.current = false;
+      cancelAnimationFrame(tutRafRef.current);
+      if (tutTimerRef.current) clearTimeout(tutTimerRef.current);
+      draggedNode = null;
+      mouse.isDown = false;
+      setShowTutorial(false);
+      setHandPos(null);
     };
 
     const handleMouseDown = (e: MouseEvent) => {
@@ -401,6 +401,7 @@ const Skills: React.FC = () => {
     return () => {
       cancelAnimationFrame(animationFrameId);
       cancelAnimationFrame(tutRafRef.current);
+      if (tutTimerRef.current) clearTimeout(tutTimerRef.current);
       observer.disconnect();
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
