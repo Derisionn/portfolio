@@ -40,24 +40,26 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 2rem;
   width: 100%;
-  /* align-items: start ensures rows don't stretch to match tallest card */
-  align-items: start;
+  align-items: stretch; /* all placeholders in a row stretch to same height */
 }
 
 /* Transparent grid placeholder — holds the space, never visible */
 .project-card-placeholder {
   position: relative;
-  height: 280px; /* Fixed compact height that all cards share */
+  min-height: 260px;   /* baseline height; all cards in a row share the tallest */
   border-radius: 20px;
   animation: scaleIn 0.5s ease backwards;
 }
 
-/* The actual visible card — positioned absolutely inside the placeholder */
+/* The actual visible card — fills the placeholder height exactly */
 .project-card {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;  /* Compact: matches placeholder width */
+  width: 100%;
+  height: 100%;           /* match placeholder height → all cards same size */
+  display: flex;
+  flex-direction: column;
   background-color: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
@@ -68,14 +70,16 @@
   cursor: default;
   transition:
     width 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.35s ease,
     box-shadow 0.35s ease,
     transform 0.35s ease;
 }
 
-/* On hover: expand width AND reveal extra height via max-height */
+/* On hover: expand width AND auto height for description drawer */
 .project-card-placeholder:hover .project-card {
-  width: 130%;  /* Grows horizontally beyond the placeholder */
+  width: 130%;
+  height: auto;           /* let content dictate height on hover */
   border-color: var(--accent);
   box-shadow:
     0 24px 48px rgba(0, 0, 0, 0.5),
