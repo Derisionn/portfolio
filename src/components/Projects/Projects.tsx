@@ -6,6 +6,7 @@ const projectData = [
     id: 1,
     title: 'Agentic Hybrid SQL RAG System',
     category: 'AI/ML',
+    image: '/sql-rag.png',
     tech: 'Python, LangGraph, Pinecone, Neo4j, Gemini, FastAPI, Azure SQL',
     description: [
       'Built a production-grade Text-to-SQL system over a 70-table Azure SQL database, converting natural language into executable SQL with live results.',
@@ -14,12 +15,13 @@ const projectData = [
       'Built a production-grade RAG system using embeddings, vector databases, and LLM orchestration.'
     ],
     github: '#',
-    live: '#'
+    live: 'https://rag-system2.vercel.app/'
   },
   {
     id: 2,
     title: 'AI-Powered Financial Intelligence Platform',
     category: 'AI/ML',
+    image: '/fin-intel.png',
     tech: 'PyTorch, FastAPI, Scikit-Learn, WebSockets, yfinance, Finnhub',
     description: [
       'Developed a multi-step LSTM Neural Network using PyTorch to predict 15-period forward-looking stock prices based on a 60-day historical sequence.',
@@ -28,12 +30,13 @@ const projectData = [
       'Built a high-performance FastAPI backend ensuring real-time multi-step predictions are generated and returned in under 100ms.'
     ],
     github: '#',
-    live: '#'
+    live: 'https://stock-price-prediction-murex.vercel.app/dashboard'
   },
   {
     id: 3,
     title: 'FinAlogica',
     category: 'Full Stack',
+    image: '/finalogica.png',
     tech: 'PyTorch, PostgreSQL, React, Node.js, Express.js, FastAPI',
     description: [
       'Built a scalable full-stack ML application enabling real-time inference with a modular, independently deployable architecture.',
@@ -42,7 +45,7 @@ const projectData = [
       'Automated species tagging and fishing recommendations, reducing manual logging effort by 30% and improving workflow efficiency.'
     ],
     github: '#',
-    live: '#'
+    live: 'https://fin-alogica-main-6rka.vercel.app/'
   }
 ];
 
@@ -78,6 +81,11 @@ const Projects: React.FC = () => {
 
             {/* The actual visible card — absolutely positioned so it can expand freely */}
             <div className="project-card">
+              {project.image && (
+                <div className="project-image-container">
+                  <img src={project.image} alt={project.title} className="project-image" />
+                </div>
+              )}
               <div className="project-top">
                 <div className="project-header">
                   <div className="project-category">{project.category}</div>
