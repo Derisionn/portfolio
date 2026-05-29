@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Skills.css';
 
 type Category = 'ml' | 'web' | 'backend' | 'tools';
@@ -48,6 +48,7 @@ const categoryColors = {
 };
 
 const Skills: React.FC = () => {
+  const [showTutorial, setShowTutorial] = useState(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -269,6 +270,7 @@ const Skills: React.FC = () => {
         const dx = docX - nodes[i].x;
         const dy = docY - nodes[i].y;
         if (Math.sqrt(dx * dx + dy * dy) < nodes[i].radius) {
+          setShowTutorial(false);
           draggedNode = nodes[i];
           mouse.isDown = true;
           mouse.x = docX;
@@ -307,6 +309,7 @@ const Skills: React.FC = () => {
         const dx = docX - nodes[i].x;
         const dy = docY - nodes[i].y;
         if (Math.sqrt(dx * dx + dy * dy) < nodes[i].radius) {
+          setShowTutorial(false);
           draggedNode = nodes[i];
           mouse.isDown = true;
           mouse.x = docX;
@@ -349,9 +352,23 @@ const Skills: React.FC = () => {
     };
   }, []);
 
+  /* Auto-dismiss tutorial after 4.5 s */
+  useEffect(() => {
+    if (!showTutorial) return;
+    const t = setTimeout(() => setShowTutorial(false), 4500);
+    return () => clearTimeout(t);
+  }, [showTutorial]);
+
   return (
     <section className="skills section" id="skills" ref={sectionRef}>
       <canvas ref={canvasRef} className="global-physics-canvas" />
+
+      {showTutorial && (
+        <div className="tutorial-hint">
+          <div className="tutorial-ghost-ball" />
+          <div className="tutorial-hand">👆</div>
+        </div>
+      )}
       
       <div className="section-header">
         <h2 className="title">Technical Expertise</h2>

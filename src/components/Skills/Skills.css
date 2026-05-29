@@ -128,3 +128,73 @@
   color: var(--text);
   margin: 0;
 }
+
+/* ─── Tutorial Hint ─────────────────────────────────── */
+.tutorial-hint {
+  position: absolute;
+  /* Sit over the first bucket (top-left area) */
+  left: calc(12.5% - 20px);
+  top: 280px;
+  width: 80px;
+  height: 160px;
+  z-index: 10000;
+  pointer-events: none;
+  animation: tutorial-fade-out 0.6s ease 3.9s forwards;
+}
+
+/* Ghost ball that gets "picked up" */
+.tutorial-ghost-ball {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #d4b8ff, #7c3aed);
+  box-shadow: 0 0 18px rgba(139, 92, 246, 0.7);
+  animation: ghost-ball-lift 1.6s ease-in-out 0.3s infinite;
+}
+
+/* Hand pointer */
+.tutorial-hand {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  animation: hand-drag 1.6s ease-in-out 0.3s infinite;
+  transform-origin: bottom center;
+}
+
+/* Hand moves: down → grab → lift up and out */
+@keyframes hand-drag {
+  0%   { transform: translateX(-50%) translateY(0px) rotate(0deg); opacity: 0; }
+  15%  { transform: translateX(-50%) translateY(-10px) rotate(0deg); opacity: 1; }
+  35%  { transform: translateX(-50%) translateY(-10px) rotate(-15deg); } /* grab squeeze */
+  55%  { transform: translateX(-50%) translateY(-80px) rotate(-15deg); } /* lift */
+  80%  { transform: translateX(-50%) translateY(-130px) rotate(-10deg); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-140px) rotate(0deg); opacity: 0; }
+}
+
+@keyframes ghost-ball-lift {
+  0%   { transform: translateX(-50%) translateY(0px); opacity: 0.9; }
+  30%  { transform: translateX(-50%) translateY(0px); opacity: 0.9; } /* wait for grab */
+  55%  { transform: translateX(-50%) translateY(-70px); opacity: 0.9; } /* lift with hand */
+  80%  { transform: translateX(-50%) translateY(-120px); opacity: 0.7; }
+  100% { transform: translateX(-50%) translateY(-130px); opacity: 0; }
+}
+
+@keyframes tutorial-fade-out {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* On small screens center the hint */
+@media (max-width: 768px) {
+  .tutorial-hint {
+    left: calc(50% - 40px);
+    top: 220px;
+  }
+}
+
