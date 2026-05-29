@@ -251,7 +251,8 @@ const Skills: React.FC = () => {
 
           const runTutorialCycle = () => {
             if (!tutActiveRef.current || nodes.length === 0) return;
-            const tutNode = nodes[0];
+            // Pick a ball from the Backend bucket (3rd of 4 columns = middle)
+            const tutNode = nodes.find(n => n.text === 'Node.js') ?? nodes[0];
 
             // Grab ball at its current (settled) position
             mouse.x = tutNode.x;
