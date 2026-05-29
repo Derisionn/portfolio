@@ -1,0 +1,10 @@
+[
+  { "name": "React", "icon": "" },
+  { "name": "TypeScript", "icon": "" },
+  { "name": "JavaScript", "icon": "" },
+  { "name": "Node.js", "icon": "" },
+  { "name": "HTML5", "icon": "" },
+  { "name": "CSS3", "icon": "" },
+  { "name": "Git", "icon": "" },
+  { "name": "Vite", "icon": "" }
+]

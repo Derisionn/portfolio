@@ -1,0 +1,128 @@
+:root {
+  /* HSL Variables for Light Theme */
+  --bg-hue: 210;
+  --bg-sat: 20%;
+  --bg-light: 98%;
+  
+  --text-hue: 220;
+  --text-sat: 10%;
+  --text-light: 20%;
+
+  --accent-hue: 260;
+  --accent-sat: 90%;
+  --accent-light: 60%;
+
+  --glass-bg: hsla(var(--bg-hue), var(--bg-sat), 90%, 0.7);
+  --glass-border: hsla(var(--bg-hue), var(--bg-sat), 80%, 0.5);
+
+  --background: hsl(var(--bg-hue), var(--bg-sat), var(--bg-light));
+  --text: hsl(var(--text-hue), var(--text-sat), var(--text-light));
+  --accent: hsl(var(--accent-hue), var(--accent-sat), var(--accent-light));
+  
+  --shadow-color: hsla(var(--bg-hue), 10%, 10%, 0.1);
+}
+
+[data-theme="dark"] {
+  /* HSL Variables for Dark Theme */
+  --bg-hue: 220;
+  --bg-sat: 15%;
+  --bg-light: 8%;
+
+  --text-hue: 210;
+  --text-sat: 15%;
+  --text-light: 95%;
+
+  --accent-hue: 260;
+  --accent-sat: 90%;
+  --accent-light: 70%;
+
+  --glass-bg: hsla(var(--bg-hue), var(--bg-sat), 15%, 0.6);
+  --glass-border: hsla(var(--bg-hue), var(--bg-sat), 30%, 0.3);
+
+  --background: hsl(var(--bg-hue), var(--bg-sat), var(--bg-light));
+  --text: hsl(var(--text-hue), var(--text-sat), var(--text-light));
+  
+  --shadow-color: hsla(var(--bg-hue), 10%, 0%, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  transition: background-color 0.5s ease, color 0.5s ease;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Parallax Background Container */
+.fixed-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background: radial-gradient(circle at 50% 50%, 
+    hsla(var(--accent-hue), 30%, var(--bg-light), 0.2) 0%, 
+    var(--background) 100%);
+}
+
+.fixed-background::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(var(--glass-border) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.2;
+}
+
+/* Scrollable Main Content */
+.main-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Utility classes for layout */
+.section {
+  min-height: 100vh;
+  padding: 100px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--text);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+html {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
