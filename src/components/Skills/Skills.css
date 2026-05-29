@@ -139,6 +139,8 @@
   transform: translate(-40%, -110%);
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.6));
   animation: hand-pulse 0.35s ease-in-out infinite alternate;
+  transition: opacity 0.25s ease;  /* smooth fade in/out, no snap-flicker */
+  will-change: left, top, opacity;  /* hint browser to composite on GPU */
 }
 
 @keyframes hand-pulse {

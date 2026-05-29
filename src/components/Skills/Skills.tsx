@@ -49,7 +49,7 @@ const categoryColors = {
 
 const Skills: React.FC = () => {
   const [showTutorial, setShowTutorial] = useState(true);
-  const [handPos, setHandPos] = useState<{ x: number; y: number } | null>(null);
+  const handRef = useRef<HTMLDivElement>(null);   // direct DOM — no re-renders
   const tutRafRef = useRef<number>(0);
   const tutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tutActiveRef = useRef<boolean>(false);
@@ -272,7 +272,12 @@ const Skills: React.FC = () => {
               const e = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
               mouse.x = startX;
               mouse.y = startY + (targetY - startY) * e;
-              setHandPos({ x: mouse.x, y: mouse.y - window.scrollY });
+              // Move hand directly via DOM — zero React re-renders, no flicker
+              if (handRef.current) {
+                handRef.current.style.left = `${mouse.x}px`;
+                handRef.current.style.top  = `${mouse.y - window.scrollY}px`;
+                handRef.current.style.opacity = '1';
+              }
 
               if (t < 1) {
                 tutRafRef.current = requestAnimationFrame(animTut);
@@ -280,7 +285,7 @@ const Skills: React.FC = () => {
                 // Release ball — let physics take over
                 draggedNode = null;
                 mouse.isDown = false;
-                setHandPos(null);
+                if (handRef.current) handRef.current.style.opacity = '0';
                 // Pause, then repeat the cycle
                 tutTimerRef.current = setTimeout(() => {
                   runTutorialCycle();
@@ -320,8 +325,8 @@ const Skills: React.FC = () => {
       if (tutTimerRef.current) clearTimeout(tutTimerRef.current);
       draggedNode = null;
       mouse.isDown = false;
+      if (handRef.current) handRef.current.style.opacity = '0';
       setShowTutorial(false);
-      setHandPos(null);
     };
 
     const handleMouseDown = (e: MouseEvent) => {
@@ -419,11 +424,12 @@ const Skills: React.FC = () => {
     <section className="skills section" id="skills" ref={sectionRef}>
       <canvas ref={canvasRef} className="global-physics-canvas" />
 
-      {/* Hand emoji follows the real ball being dragged */}
-      {showTutorial && handPos && (
+      {/* Hand emoji — moved via direct DOM style, never triggers re-render */}
+      {showTutorial && (
         <div
+          ref={handRef}
           className="tutorial-hand"
-          style={{ left: handPos.x, top: handPos.y }}
+          style={{ opacity: 0 }}   /* starts hidden; shown once first cycle begins */
         >
           👆
         </div>
