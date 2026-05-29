@@ -70,8 +70,6 @@ const Skills: React.FC = () => {
     let draggedNode: SkillNode | null = null;
     let buckets: any[] = [];
     let nodes: SkillNode[] = [];
-    let maxDropY = window.innerHeight;
-
     const updateBuckets = () => {
       buckets = ['ml', 'web', 'backend', 'tools'].map(id => {
         const el = document.getElementById(`bucket-${id}`);
@@ -85,10 +83,6 @@ const Skills: React.FC = () => {
           bottom: rect.bottom + window.scrollY - 5,
         };
       }).filter(Boolean);
-
-      if (buckets.length > 0) {
-        maxDropY = Math.max(...buckets.map(b => b.bottom));
-      }
     };
 
     // Dynamically calculate radius to be a reasonable size across screen sizes
