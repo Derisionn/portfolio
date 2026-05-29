@@ -10,9 +10,9 @@ import './Contact.css';
 //  4. Go to Account → API Keys           → copy the Public Key
 //  Then replace the three placeholders below.
 // ─────────────────────────────────────────────
-const EMAILJS_SERVICE_ID  = 'service_ln49wyp';
-const EMAILJS_TEMPLATE_ID = 'template_arsshqc';
-const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID  as string;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
+const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY  as string;
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
