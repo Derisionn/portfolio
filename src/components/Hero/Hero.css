@@ -1,4 +1,6 @@
 .hero-section {
+  position: relative;
+  overflow: hidden;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -8,6 +10,8 @@
 }
 
 .hero-content {
+  position: relative;
+  z-index: 1;
   max-width: 800px;
   animation: fadeInUp 1s ease forwards;
 }
@@ -112,6 +116,34 @@
   }
   50% {
     transform: translateY(-15px);
+  }
+}
+
+/* ─── Typing Effect ─── */
+.typing-cursor {
+  display: inline-block;
+  color: var(--accent);
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+}
+
+.dynamic-text {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.static-text {
+  opacity: 0.8;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (min-width: 768px) {
+  .mobile-break {
+    display: none;
   }
 }
 

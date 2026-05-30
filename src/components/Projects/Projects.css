@@ -266,3 +266,44 @@
     transform: scale(1) translateY(0);
   }
 }
+
+/* ─── Mobile Responsiveness ─── */
+@media (max-width: 768px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .project-card-placeholder {
+    min-height: auto;
+  }
+
+  /* Reset absolute positioning so cards flow naturally */
+  .project-card {
+    position: relative;
+    left: 0;
+    transform: none;
+    width: 100%;
+    min-height: auto;
+  }
+
+  /* Disable horizontal hover expansion on mobile */
+  .project-card-placeholder:hover .project-card {
+    width: 100%;
+    transform: translateY(-4px); /* Just a subtle lift */
+    z-index: 10;
+  }
+
+  /* Always show descriptions on mobile to avoid clunky tap-to-hover UX */
+  .project-details {
+    max-height: 2000px; 
+  }
+
+  .expand-hint {
+    display: none;
+  }
+
+  .project-image-container {
+    height: 200px; /* Slightly shorter hero images for phones */
+  }
+}

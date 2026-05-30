@@ -104,11 +104,14 @@ const Skills: React.FC = () => {
       color: string;
       img: HTMLImageElement | null = null;
       iconLoaded: boolean = false;
+      targetBucketId: string;
+      hasSettled: boolean = false;
 
       constructor(skill: Skill) {
         this.text = skill.text;
         this.color = categoryColors[skill.category];
         this.radius = dynamicRadius;
+        this.targetBucketId = skill.category;
         
         if (skill.icon) {
           this.img = new Image();
@@ -121,14 +124,26 @@ const Skills: React.FC = () => {
         if (bucket && bucket.right > bucket.left) {
           const bucketWidth = bucket.right - bucket.left;
           this.x = bucket.left + bucketWidth / 2 + (Math.random() - 0.5) * (bucketWidth - this.radius * 2);
-          this.y = bucket.top - 200 - Math.random() * 400; // Drop from above
+          
+          // To make bottom buckets fill first, we must accurately detect if this bucket is in the bottom row.
+          // We do this by comparing its top coordinate to the very first bucket's top coordinate.
+          const firstBucket = buckets[0];
+          const isBottomRow = firstBucket && (bucket.top > firstBucket.top + 50); 
+          
+          if (isBottomRow) {
+            this.y = window.scrollY - 50 - Math.random() * 300;  // Spawns just barely out of frame
+          } else {
+            this.y = window.scrollY - 1600 - Math.random() * 800; // Spawns extremely high up
+          }
+          
+          this.vx = (Math.random() - 0.5) * 2;
+          this.vy = Math.random() * 2;
         } else {
           this.x = width / 2;
           this.y = window.scrollY - 200;
+          this.vx = (Math.random() - 0.5) * 2;
+          this.vy = Math.random() * 2;
         }
-        
-        this.vx = (Math.random() - 0.5) * 2;
-        this.vy = Math.random() * 2;
       }
 
       update() {
@@ -149,6 +164,9 @@ const Skills: React.FC = () => {
           for(let b of buckets) {
             // Generous vertical catch area
             if (this.x > b.left && this.x < b.right && this.y < b.bottom && this.y > b.top - 2000) {
+              // Ignore wrong buckets while initially falling from the sky
+              if (!this.hasSettled && b.id !== this.targetBucketId) continue;
+              
               insideBucket = b;
               break;
             }
@@ -161,6 +179,7 @@ const Skills: React.FC = () => {
             // Floor — settle instead of micro-bounce
             if (this.y + this.radius > insideBucket.bottom) {
               this.y = insideBucket.bottom - this.radius;
+              this.hasSettled = true; // Ball has safely reached a bucket
               if (Math.abs(this.vy) < 1.5) { this.vy = 0; }  // settle
               else                          { this.vy *= -bounce; }
             }
@@ -182,7 +201,9 @@ const Skills: React.FC = () => {
              
              // The floor is always the bottom of the current visible screen
              const floor = window.scrollY + window.innerHeight - 10;
-             if (this.y + this.radius > floor) { 
+             // ONLY apply the viewport floor bounce if the ball has already settled.
+             // This allows initially falling balls to pass through the viewport bottom to reach buckets below the fold!
+             if (this.hasSettled && this.y + this.radius > floor) { 
                 this.y = floor - this.radius; 
                 this.vy *= -bounce; 
                 // Scatter randomly when hitting the floor
@@ -190,6 +211,12 @@ const Skills: React.FC = () => {
                   this.vx += (Math.random() - 0.5) * 8; // Random horizontal scatter
                   this.vy -= Math.random() * 3;         // Random extra vertical bounce
                 }
+             }
+             
+             // Failsafe: if a ball somehow falls completely off the document, reset it to the top
+             if (!this.hasSettled && this.y > window.scrollY + 3000) {
+               this.y = window.scrollY - 200;
+               this.vx = 0;
              }
           }
         }
@@ -432,6 +459,7 @@ const Skills: React.FC = () => {
         const dx = docX - nodes[i].x;
         const dy = docY - nodes[i].y;
         if (Math.sqrt(dx * dx + dy * dy) < nodes[i].radius) {
+          nodes[i].hasSettled = true; // Allow it to interact with any bucket once grabbed
           draggedNode = nodes[i];
           hoveredNode = null; // Dragging takes precedence
           mouse.isDown = true;
@@ -474,6 +502,7 @@ const Skills: React.FC = () => {
         const dy = docY - nodes[i].y;
         if (Math.sqrt(dx * dx + dy * dy) < nodes[i].radius) {
           cancelTutorial();
+          nodes[i].hasSettled = true; // Allow it to interact with any bucket once grabbed
           draggedNode = nodes[i];
           mouse.isDown = true;
           mouse.x = docX;
