@@ -3,6 +3,20 @@ import './Projects.css';
 
 const projectData = [
   {
+    id: 6,
+    title: 'Colab Code',
+    category: 'Full Stack',
+    image: '/colab-code.png',
+    tech: 'React, Vite, Monaco Editor, Express, MongoDB, Yjs',
+    description: [
+      'Built a VS Code-style collaborative web IDE featuring an activity bar, file explorer, Monaco editor, and terminal panel.',
+      'Implemented real-time collaboration using Yjs and Hocuspocus, rendering presence and persisting documents to MongoDB.',
+      'Integrated code execution capabilities using Judge0, allowing users to run code and stream outputs directly to the terminal.'
+    ],
+    github: 'https://github.com/Derisionn/multiCoder',
+    live: 'https://multi-coder.vercel.app/'
+  },
+  {
     id: 1,
     title: 'Agentic Hybrid SQL RAG System',
     category: 'AI/ML',
@@ -46,10 +60,38 @@ const projectData = [
     ],
     github: '#',
     live: 'https://fin-alogica-main-6rka.vercel.app/'
+  },
+  {
+    id: 4,
+    title: 'WhatsApp Chat Data Analytics Dashboard',
+    category: 'Data Analytics',
+    image: '/whatsapp.png',
+    tech: 'Python, Pandas, Seaborn, NLP',
+    description: [
+      'Developed an end-to-end analytics dashboard to uncover deep insights from WhatsApp group chats, rendering interactive monthly, daily, and 24-hour activity heatmaps.',
+      'Cleaned and structured messy, unstructured text logs into actionable DataFrames using advanced Regex parsing and Pandas manipulation.',
+      'Conducted sentiment analysis and emoji usage frequency mapping to profile user engagement and emotional polarity.'
+    ],
+    github: 'https://github.com/Derisionn/WhatsApp-Chat-Analyzer',
+    live: 'https://whatsapp-chat-analyzer-bxnel5xhompsxcu3idvf85.streamlit.app/'
+  },
+  {
+    id: 5,
+    title: 'MoggerTech',
+    category: 'Full Stack',
+    image: '/mogger-tech.png',
+    tech: 'Next.js, Tailwind CSS, Framer Motion, Lenis, TypeScript',
+    description: [
+      'Built a modern, high-performance digital presence for a tech agency featuring smooth scrolling and fluid micro-interactions.',
+      'Utilized Framer Motion for scroll-triggered animations and Lenis for seamless smooth scrolling to deliver a premium user experience.',
+      'Designed a modular, component-based architecture in Next.js ensuring maintainability and fast page load speeds via Server-Side Rendering (SSR) and dynamic imports.'
+    ],
+    github: 'https://github.com/Derisionn/MoggerTech',
+    live: 'https://mogger-tech.vercel.app/'
   }
 ];
 
-const categories = ['All', 'AI/ML', 'Full Stack'];
+const categories = ['All', 'AI/ML', 'Full Stack', 'Data Analytics'];
 
 const Projects: React.FC = () => {
   const [filter, setFilter] = useState('All');

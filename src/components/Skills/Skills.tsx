@@ -131,9 +131,9 @@ const Skills: React.FC = () => {
           const isBottomRow = firstBucket && (bucket.top > firstBucket.top + 50); 
           
           if (isBottomRow) {
-            this.y = window.scrollY - 50 - Math.random() * 300;  // Spawns just barely out of frame
+            this.y = window.scrollY - 20 - Math.random() * 100;  // Spawns just barely out of frame
           } else {
-            this.y = window.scrollY - 1600 - Math.random() * 800; // Spawns extremely high up
+            this.y = window.scrollY - 80 - Math.random() * 150; // Spawns slightly higher
           }
           
           this.vx = (Math.random() - 0.5) * 2;
@@ -399,7 +399,7 @@ const Skills: React.FC = () => {
         }, 100);
         observer.disconnect();
       }
-    }, { threshold: 0.2 });
+    }, { threshold: 0.01 });
 
     if (section) {
       observer.observe(section);
